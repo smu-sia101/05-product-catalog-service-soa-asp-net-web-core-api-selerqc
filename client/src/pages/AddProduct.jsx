@@ -24,8 +24,8 @@ function AddProduct({ isOpen, onClose, onAdd }) {
         formData
       );
       console.log("Product added successfully", response.data);
-      onAdd(response.data); // Pass the new product back to the parent
-      onClose(); // Close the modal
+      onAdd(response.data);
+      onClose(); 
     } catch (error) {
       console.error("Error adding product", error);
     }
