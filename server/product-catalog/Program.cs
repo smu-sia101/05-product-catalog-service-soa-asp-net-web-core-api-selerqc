@@ -1,3 +1,4 @@
+using dotenv.net;
 using MongoDB.Driver;
 using product_catalog;
 using product_catalog.Model;
@@ -5,7 +6,15 @@ using product_catalog.Model;
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
+DotEnv.Load();
+
+
+builder.Services.Configure<MongoDBSettings>(options =>
+{
+    options.ConnectionString = Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING");
+    options.DatabaseName = Environment.GetEnvironmentVariable("MONGODB_DATABASE_NAME");
+    options.ProductsCollectionName = Environment.GetEnvironmentVariable("MONGODB_PRODUCTS_COLLECTION_NAME");
+});
 builder.Services.AddSingleton<MongoDBContext>();
 builder.Services.AddControllers();
 

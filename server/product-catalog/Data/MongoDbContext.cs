@@ -7,14 +7,16 @@ namespace product_catalog
     public class MongoDBContext
     {
         private readonly IMongoDatabase _database;
+        private readonly MongoDBSettings _settings;
 
         public MongoDBContext(IOptions<MongoDBSettings> settings)
         {
-            var client = new MongoClient(settings.Value.ConnectionString);
-            _database = client.GetDatabase(settings.Value.DatabaseName);
+            _settings = settings.Value;
+            var client = new MongoClient(_settings.ConnectionString);
+            _database = client.GetDatabase(_settings.DatabaseName);
         }
 
-        public IMongoCollection<Product> Products => _database.GetCollection<Product>(nameof(Product));
+        public IMongoCollection<Product> Products => _database.GetCollection<Product>(_settings.ProductsCollectionName);
     }
 
     public class MongoDBSettings
@@ -23,5 +25,4 @@ namespace product_catalog
         public string DatabaseName { get; set; }
         public string ProductsCollectionName { get; set; }
     }
-
 }
