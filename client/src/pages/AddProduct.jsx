@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 function AddProduct({ isOpen, onClose, onAdd }) {
@@ -16,9 +16,32 @@ function AddProduct({ isOpen, onClose, onAdd }) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
+  useEffect(() => {
+    const checkIfProductExists = async () => {
+      try {
+        const response = await axios.get(`https://localhost:7048/api/Products/${formData.id}`);
+        if (response.data) {
+          alert("Product with this ID already exists. Please use a different ID.");
+          setFormData((prev) => ({ ...prev, id: "" }));
+        }
+      } catch (error) {
+       console.error("Error checking product ID", error);
+      }
+    };
+    if (formData.id) {
+      checkIfProductExists();
+    }
+  }, [formData.id]);
   const handleSubmit = async () => {
     try {
+      if(!formData.id || !formData.name || !formData.price || !formData.description || !formData.category || !formData.stock || !formData.imageUrl) {
+        alert("Please fill in all fields.");
+        return;
+      }
+      if(!formData.imageUrl.startsWith('http')) {
+        alert("Please provide a valid image URL.");
+        return;
+      }
       const response = await axios.post(
         "https://localhost:7048/api/Products",
         formData
